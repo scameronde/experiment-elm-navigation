@@ -1,6 +1,6 @@
-module ModulesV2 exposing (..)
+module Modules exposing (..)
 
-import SumNodeV2 as SumNode
+import SumNode
 import Html exposing (..)
 import Navigation
 import Model
@@ -30,10 +30,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         UrlChange newUrl ->
-            ( { model | history = newUrl :: model.history }, Cmd.none )
+            Model.create Model
+                |> Model.combine SumNodeMsg (SumNode.update (SumNode.UrlChange newUrl) model.sumNodeModel)
+                |> Model.set (newUrl :: model.history)
+                |> Model.run
 
         SumNodeMsg imsg ->
-            Model.map (sumNodeLens.fset model) SumNodeMsg (SumNode.update imsg model.sumNodeModel)
+            Model.map
+                (sumNodeLens.fset model)
+                SumNodeMsg
+                (SumNode.update imsg model.sumNodeModel)
 
 
 view : Model -> Html Msg
