@@ -14242,41 +14242,6 @@ var _scameronde$experiment_elm_navigation$Leaf3$view = function (model) {
 			}
 		});
 };
-var _scameronde$experiment_elm_navigation$Lens$Lens = F3(
-	function (a, b, c) {
-		return {get: a, set: b, fset: c};
-	});
-var _scameronde$experiment_elm_navigation$Lens$lens = F2(
-	function (get, set) {
-		return A3(
-			_scameronde$experiment_elm_navigation$Lens$Lens,
-			get,
-			set,
-			_elm_lang$core$Basics$flip(set));
-	});
-var _scameronde$experiment_elm_navigation$Lens_ops = _scameronde$experiment_elm_navigation$Lens_ops || {};
-_scameronde$experiment_elm_navigation$Lens_ops['.'] = F2(
-	function (lensAB, lensBC) {
-		var get = function (_p0) {
-			return lensBC.get(
-				lensAB.get(_p0));
-		};
-		var set = F2(
-			function (c, a) {
-				return function (b) {
-					return A2(lensAB.set, b, a);
-				}(
-					A2(
-						lensBC.set,
-						c,
-						lensAB.get(a)));
-			});
-		return A2(_scameronde$experiment_elm_navigation$Lens$lens, get, set);
-	});
-var _scameronde$experiment_elm_navigation$Lens$compose = F2(
-	function (x, y) {
-		return A2(_scameronde$experiment_elm_navigation$Lens_ops['.'], x, y);
-	});
 var _scameronde$experiment_elm_navigation$Model$insteadDo = F2(
 	function (cmd, r) {
 		return {
@@ -14526,18 +14491,15 @@ var _scameronde$experiment_elm_navigation$SumNode$ProductNodeModel = function (a
 var _scameronde$experiment_elm_navigation$SumNode$Leaf1Model = function (a) {
 	return {ctor: 'Leaf1Model', _0: a};
 };
+var _scameronde$experiment_elm_navigation$SumNode$UrlChange = function (a) {
+	return {ctor: 'UrlChange', _0: a};
+};
 var _scameronde$experiment_elm_navigation$SumNode$ProductNodeMsg = function (a) {
 	return {ctor: 'ProductNodeMsg', _0: a};
 };
 var _scameronde$experiment_elm_navigation$SumNode$Leaf1Msg = function (a) {
 	return {ctor: 'Leaf1Msg', _0: a};
 };
-var _scameronde$experiment_elm_navigation$SumNode$init = _scameronde$experiment_elm_navigation$Model$run(
-	A3(
-		_scameronde$experiment_elm_navigation$Model$combine,
-		_scameronde$experiment_elm_navigation$SumNode$Leaf1Msg,
-		_scameronde$experiment_elm_navigation$Leaf1$init,
-		_scameronde$experiment_elm_navigation$Model$create(_scameronde$experiment_elm_navigation$SumNode$Leaf1Model)));
 var _scameronde$experiment_elm_navigation$SumNode$view = function (model) {
 	var _p0 = model;
 	if (_p0.ctor === 'Leaf1Model') {
@@ -14566,9 +14528,6 @@ var _scameronde$experiment_elm_navigation$SumNode$subscriptions = function (mode
 			_scameronde$experiment_elm_navigation$ProductNode$subscriptions(_p1._0));
 	}
 };
-var _scameronde$experiment_elm_navigation$SumNode$UrlChange = function (a) {
-	return {ctor: 'UrlChange', _0: a};
-};
 var _scameronde$experiment_elm_navigation$SumNode$Right = function (a) {
 	return {ctor: 'Right', _0: a};
 };
@@ -14596,71 +14555,56 @@ var _scameronde$experiment_elm_navigation$SumNode$route = _evancz$url_parser$Url
 			}
 		}
 	});
+var _scameronde$experiment_elm_navigation$SumNode$locationChange = function (location) {
+	var _p2 = A2(_evancz$url_parser$UrlParser$parseHash, _scameronde$experiment_elm_navigation$SumNode$route, location);
+	if (_p2.ctor === 'Nothing') {
+		return A3(_scameronde$experiment_elm_navigation$Model$map, _scameronde$experiment_elm_navigation$SumNode$Leaf1Model, _scameronde$experiment_elm_navigation$SumNode$Leaf1Msg, _scameronde$experiment_elm_navigation$Leaf1$init);
+	} else {
+		if (_p2._0.ctor === 'Left') {
+			return A3(_scameronde$experiment_elm_navigation$Model$map, _scameronde$experiment_elm_navigation$SumNode$Leaf1Model, _scameronde$experiment_elm_navigation$SumNode$Leaf1Msg, _scameronde$experiment_elm_navigation$Leaf1$init);
+		} else {
+			return A3(
+				_scameronde$experiment_elm_navigation$Model$map,
+				_scameronde$experiment_elm_navigation$SumNode$ProductNodeModel,
+				_scameronde$experiment_elm_navigation$SumNode$ProductNodeMsg,
+				_scameronde$experiment_elm_navigation$ProductNode$init(_p2._0._0));
+		}
+	}
+};
+var _scameronde$experiment_elm_navigation$SumNode$init = function (startLocation) {
+	return _scameronde$experiment_elm_navigation$SumNode$locationChange(startLocation);
+};
 var _scameronde$experiment_elm_navigation$SumNode$update = F2(
 	function (msg, model) {
-		var _p2 = {ctor: '_Tuple2', _0: msg, _1: model};
-		_v2_5:
+		var _p3 = {ctor: '_Tuple2', _0: msg, _1: model};
+		_v3_5:
 		do {
-			if (_p2.ctor === '_Tuple2') {
-				switch (_p2._0.ctor) {
+			if (_p3.ctor === '_Tuple2') {
+				switch (_p3._0.ctor) {
 					case 'UrlChange':
-						var _p8 = _p2._1;
-						var _p3 = A2(_evancz$url_parser$UrlParser$parseHash, _scameronde$experiment_elm_navigation$SumNode$route, _p2._0._0);
-						if (_p3.ctor === 'Nothing') {
-							var _p4 = _p8;
-							if (_p4.ctor === 'Leaf1Model') {
-								return {ctor: '_Tuple2', _0: _p8, _1: _elm_lang$core$Platform_Cmd$none};
-							} else {
-								return A3(_scameronde$experiment_elm_navigation$Model$map, _scameronde$experiment_elm_navigation$SumNode$Leaf1Model, _scameronde$experiment_elm_navigation$SumNode$Leaf1Msg, _scameronde$experiment_elm_navigation$Leaf1$init);
-							}
-						} else {
-							if (_p3._0.ctor === 'Left') {
-								var _p5 = _p8;
-								if (_p5.ctor === 'Leaf1Model') {
-									return {ctor: '_Tuple2', _0: _p8, _1: _elm_lang$core$Platform_Cmd$none};
-								} else {
-									return A3(_scameronde$experiment_elm_navigation$Model$map, _scameronde$experiment_elm_navigation$SumNode$Leaf1Model, _scameronde$experiment_elm_navigation$SumNode$Leaf1Msg, _scameronde$experiment_elm_navigation$Leaf1$init);
-								}
-							} else {
-								var _p7 = _p3._0._0;
-								var _p6 = _p8;
-								if (_p6.ctor === 'Leaf1Model') {
-									return A3(
-										_scameronde$experiment_elm_navigation$Model$map,
-										_scameronde$experiment_elm_navigation$SumNode$ProductNodeModel,
-										_scameronde$experiment_elm_navigation$SumNode$ProductNodeMsg,
-										_scameronde$experiment_elm_navigation$ProductNode$init(_p7));
-								} else {
-									return A3(
-										_scameronde$experiment_elm_navigation$Model$map,
-										_scameronde$experiment_elm_navigation$SumNode$ProductNodeModel,
-										_scameronde$experiment_elm_navigation$SumNode$ProductNodeMsg,
-										_scameronde$experiment_elm_navigation$ProductNode$init(_p7));
-								}
-							}
-						}
+						return _scameronde$experiment_elm_navigation$SumNode$locationChange(_p3._0._0);
 					case 'Leaf1Msg':
-						if (_p2._0._0.ctor === 'Exit') {
+						if (_p3._0._0.ctor === 'Exit') {
 							return {
 								ctor: '_Tuple2',
 								_0: model,
 								_1: _elm_lang$navigation$Navigation$newUrl(
-									A2(_elm_lang$core$Basics_ops['++'], '#right/', _p2._0._0._0))
+									A2(_elm_lang$core$Basics_ops['++'], '#right/', _p3._0._0._0))
 							};
 						} else {
-							if (_p2._1.ctor === 'Leaf1Model') {
+							if (_p3._1.ctor === 'Leaf1Model') {
 								return A3(
 									_scameronde$experiment_elm_navigation$Model$map,
 									_scameronde$experiment_elm_navigation$SumNode$Leaf1Model,
 									_scameronde$experiment_elm_navigation$SumNode$Leaf1Msg,
-									A2(_scameronde$experiment_elm_navigation$Leaf1$update, _p2._0._0, _p2._1._0));
+									A2(_scameronde$experiment_elm_navigation$Leaf1$update, _p3._0._0, _p3._1._0));
 							} else {
-								break _v2_5;
+								break _v3_5;
 							}
 						}
 					default:
-						if (_p2._1.ctor === 'ProductNodeModel') {
-							if (_p2._0._0.ctor === 'BackMsg') {
+						if (_p3._1.ctor === 'ProductNodeModel') {
+							if (_p3._0._0.ctor === 'BackMsg') {
 								return {
 									ctor: '_Tuple2',
 									_0: model,
@@ -14671,29 +14615,18 @@ var _scameronde$experiment_elm_navigation$SumNode$update = F2(
 									_scameronde$experiment_elm_navigation$Model$map,
 									_scameronde$experiment_elm_navigation$SumNode$ProductNodeModel,
 									_scameronde$experiment_elm_navigation$SumNode$ProductNodeMsg,
-									A2(_scameronde$experiment_elm_navigation$ProductNode$update, _p2._0._0, _p2._1._0));
+									A2(_scameronde$experiment_elm_navigation$ProductNode$update, _p3._0._0, _p3._1._0));
 							}
 						} else {
-							break _v2_5;
+							break _v3_5;
 						}
 				}
 			} else {
-				break _v2_5;
+				break _v3_5;
 			}
 		} while(false);
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
-var _scameronde$experiment_elm_navigation$Modules$sumNodeLens = A2(
-	_scameronde$experiment_elm_navigation$Lens$lens,
-	function (_) {
-		return _.sumNodeModel;
-	},
-	F2(
-		function (a, b) {
-			return _elm_lang$core$Native_Utils.update(
-				b,
-				{sumNodeModel: a});
-		}));
 var _scameronde$experiment_elm_navigation$Modules$Model = F2(
 	function (a, b) {
 		return {sumNodeModel: a, history: b};
@@ -14716,7 +14649,7 @@ var _scameronde$experiment_elm_navigation$Modules$init = function (startLocation
 			A3(
 				_scameronde$experiment_elm_navigation$Model$combine,
 				_scameronde$experiment_elm_navigation$Modules$SumNodeMsg,
-				_scameronde$experiment_elm_navigation$SumNode$init,
+				_scameronde$experiment_elm_navigation$SumNode$init(startLocation),
 				_scameronde$experiment_elm_navigation$Model$create(_scameronde$experiment_elm_navigation$Modules$Model))));
 };
 var _scameronde$experiment_elm_navigation$Modules$update = F2(
@@ -14739,7 +14672,11 @@ var _scameronde$experiment_elm_navigation$Modules$update = F2(
 		} else {
 			return A3(
 				_scameronde$experiment_elm_navigation$Model$map,
-				_scameronde$experiment_elm_navigation$Modules$sumNodeLens.fset(model),
+				function (a) {
+					return _elm_lang$core$Native_Utils.update(
+						model,
+						{sumNodeModel: a});
+				},
 				_scameronde$experiment_elm_navigation$Modules$SumNodeMsg,
 				A2(_scameronde$experiment_elm_navigation$SumNode$update, _p0._0, model.sumNodeModel));
 		}

@@ -14,9 +14,9 @@ type Model
 
 
 type Msg
-    = UrlChange Navigation.Location
-    | Leaf1Msg Leaf1.Msg
+    = Leaf1Msg Leaf1.Msg
     | ProductNodeMsg ProductNode.Msg
+    | UrlChange Navigation.Location
 
 
 type Route
@@ -33,55 +33,41 @@ route =
         ]
 
 
-init : ( Model, Cmd Msg )
-init =
-    Model.create Leaf1Model
-        |> Model.combine Leaf1Msg Leaf1.init
-        |> Model.run
+locationChange : Navigation.Location -> ( Model, Cmd Msg )
+locationChange location =
+    case (parseHash route location) of
+        Nothing ->
+            Model.map Leaf1Model Leaf1Msg (Leaf1.init)
+
+        Just Left ->
+            Model.map Leaf1Model Leaf1Msg (Leaf1.init)
+
+        Just (Right aMessage) ->
+            Model.map ProductNodeModel ProductNodeMsg (ProductNode.init aMessage)
+
+
+init : Navigation.Location -> ( Model, Cmd Msg )
+init startLocation =
+    locationChange startLocation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
         ( UrlChange location, model ) ->
-            case (parseHash route location) of
-                Nothing ->
-                    case model of
-                        Leaf1Model imodel ->
-                            ( model, Cmd.none )
-
-                        ProductNodeModel imodel ->
-                            Model.map Leaf1Model Leaf1Msg (Leaf1.init)
-
-                Just Left ->
-                    case model of
-                        Leaf1Model imodel ->
-                            ( model, Cmd.none )
-
-                        ProductNodeModel imodel ->
-                            Model.map Leaf1Model Leaf1Msg (Leaf1.init)
-
-                Just (Right aMessage) ->
-                    case model of
-                        Leaf1Model imodel ->
-                            Model.map ProductNodeModel ProductNodeMsg (ProductNode.init aMessage)
-
-                        ProductNodeModel imodel ->
-                            Model.map ProductNodeModel ProductNodeMsg (ProductNode.init aMessage)
+            locationChange location
 
         ( Leaf1Msg (Leaf1.Exit aMessage), _ ) ->
             ( model, Navigation.newUrl ("#right/" ++ aMessage) )
 
-        ( Leaf1Msg imsg, Leaf1Model imodel ) ->
-            Leaf1.update imsg imodel
-                |> Model.map Leaf1Model Leaf1Msg
-
         ( ProductNodeMsg (ProductNode.BackMsg _), ProductNodeModel imodel ) ->
             ( model, Navigation.newUrl ("#left") )
 
+        ( Leaf1Msg imsg, Leaf1Model imodel ) ->
+            Model.map Leaf1Model Leaf1Msg (Leaf1.update imsg imodel)
+
         ( ProductNodeMsg imsg, ProductNodeModel imodel ) ->
-            ProductNode.update imsg imodel
-                |> Model.map ProductNodeModel ProductNodeMsg
+            Model.map ProductNodeModel ProductNodeMsg (ProductNode.update imsg imodel)
 
         _ ->
             ( model, Cmd.none )

@@ -4,7 +4,6 @@ import SumNode
 import Html exposing (..)
 import Navigation
 import Model
-import Lens
 
 
 type alias Model =
@@ -21,7 +20,7 @@ type Msg
 init : Navigation.Location -> ( Model, Cmd Msg )
 init startLocation =
     Model.create Model
-        |> Model.combine SumNodeMsg SumNode.init
+        |> Model.combine SumNodeMsg (SumNode.init startLocation)
         |> Model.set [ startLocation ]
         |> Model.run
 
@@ -37,7 +36,7 @@ update msg model =
 
         SumNodeMsg imsg ->
             Model.map
-                (sumNodeLens.fset model)
+                (\a -> { model | sumNodeModel = a })
                 SumNodeMsg
                 (SumNode.update imsg model.sumNodeModel)
 
@@ -60,8 +59,3 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
-
-
-sumNodeLens : Lens.Lens { b | sumNodeModel : a } a
-sumNodeLens =
-    Lens.lens .sumNodeModel (\a b -> { b | sumNodeModel = a })
