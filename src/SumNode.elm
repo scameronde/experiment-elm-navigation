@@ -19,11 +19,15 @@ type Msg
     | UrlChange Navigation.Location
 
 
+{-| Routes should be typesafe.
+-}
 type Route
     = Left
     | Right String
 
 
+{-| Define the possible routes of this sum node.
+-}
 route : Parser (Route -> a) a
 route =
     oneOf
@@ -33,6 +37,8 @@ route =
         ]
 
 
+{-| React to location change by initializing the correct leaf of this node.
+-}
 locationChange : Navigation.Location -> ( Model, Cmd Msg )
 locationChange location =
     case (parseHash route location) of
@@ -54,18 +60,23 @@ init startLocation =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
+        -- react to url change with location change
         ( UrlChange location, model ) ->
             locationChange location
 
+        -- switch to ProductNode as result of a message from Leaf1
         ( Leaf1Msg (Leaf1.Exit aMessage), _ ) ->
             ( model, Navigation.newUrl ("#right/" ++ aMessage) )
 
+        -- switch to Leaf1 as result of a message from ProductNode
         ( ProductNodeMsg (ProductNode.BackMsg _), ProductNodeModel imodel ) ->
             ( model, Navigation.newUrl ("#left") )
 
+        -- let Leaf1 handle it's other messages
         ( Leaf1Msg imsg, Leaf1Model imodel ) ->
             Model.map Leaf1Model Leaf1Msg (Leaf1.update imsg imodel)
 
+        -- let ProductNode handle it's own messages
         ( ProductNodeMsg imsg, ProductNodeModel imodel ) ->
             Model.map ProductNodeModel ProductNodeMsg (ProductNode.update imsg imodel)
 

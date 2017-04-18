@@ -22,6 +22,7 @@ type Msg
 
 init : String -> ( Model, Cmd Msg )
 init aMessage =
+    -- compose the initial model
     Model.create Model
         |> Model.combine Leaf2Msg (Leaf2.init aMessage)
         |> Model.combine Leaf3Msg (Leaf3.init aMessage)
@@ -45,10 +46,12 @@ update msg model =
 updateLeaf2 : Leaf2.Msg -> Model -> ( Model, Cmd Msg )
 updateLeaf2 msg model =
     case msg of
+        -- coordinate a message from Leaf2 to Leaf3
         Leaf2.Send aMessage ->
             Leaf3.update (Leaf3.Receive aMessage) model.leaf3Model
                 |> Model.map (\a -> { model | leaf3Model = a }) Leaf3Msg
 
+        -- let Leaf2 handle it's other messages
         _ ->
             Leaf2.update msg model.leaf2Model
                 |> Model.map (\a -> { model | leaf2Model = a }) Leaf2Msg
@@ -56,11 +59,13 @@ updateLeaf2 msg model =
 
 updateLeaf3 : Leaf3.Msg -> Model -> ( Model, Cmd Msg )
 updateLeaf3 msg model =
+    -- coordinate a message from Leaf3 to Leaf2
     case msg of
         Leaf3.Send aMessage ->
             Leaf2.update (Leaf2.Receive aMessage) model.leaf2Model
                 |> Model.map (\a -> { model | leaf2Model = a }) Leaf2Msg
 
+        -- let Leaf3 handle it's other messages
         _ ->
             Leaf3.update msg model.leaf3Model
                 |> Model.map (\a -> { model | leaf3Model = a }) Leaf3Msg
